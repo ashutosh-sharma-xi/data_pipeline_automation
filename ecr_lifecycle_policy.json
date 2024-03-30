@@ -5,7 +5,9 @@
             "description": "Delete untagged images",
             "selection": {
                 "tagStatus": "untagged",
-                "countType": "sinceImagePushed"
+                "countType": "sinceImagePushed",
+                "countUnit": "days",
+                "countNumber": 0
             },
             "action": {
                 "type": "expire"
