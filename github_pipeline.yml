@@ -1,18 +1,14 @@
 name: Deploy AWS CDK
 
 on:
-  #push:
-  #branches: [main]
-  #pull_requests:
-  #branches: [main]
   workflow_dispatch: # Manual trigger
 
 jobs:
-  aws-cdk:
+  aws_cdk:
     runs-on: ubuntu-latest
     steps:
-      -name: Checkout
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -21,10 +17,10 @@ jobs:
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_DEFAULT_REGION: us-east-1  # Replace with your AWS region
 
-       - name: push docker image for lambda
+      - name: push docker image for lambda
         script:
           - export REPO_NAME="data_pipeline_repo"
-          - export DOCKER_REGISTRY = "public.ecr.aws/s9c0s7v8"
+          - export DOCKER_REGISTRY="public.ecr.aws/s9c0s7v8"
           - echo "Preparing AWS CLI"
           - aws ecr describe-repositories --repository-names $REPO_NAME || aws ecr create-repository --repository-name $REPO_NAME  
           - echo "creating ecr lifecycle policy"
@@ -57,9 +53,11 @@ jobs:
 
       - name: Install requirements
         run: pip install -r requirements.txt
+        working-directory: /.
 
       - name: Synthesize CDK application
-        working-directory: cdk-aws  # Replace with your CDK project directory
+        working-directory: /.  # Replace with your CDK project directory
         run: cdk synth
+
       - name: Deploy application
         run: cdk deploy  # Adjust deployment options as needed
