@@ -1,14 +1,11 @@
 name: Deploy AWS CDK
 
 on:
-  #push:
-  #branches: [main]
-  #pull_requests:
-  #branches: [main]
   workflow_dispatch: # Manual trigger
 
 jobs:
   aws_cdk:
+    name: Deploy AWS CDK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,7 +19,7 @@ jobs:
             AWS_DEFAULT_REGION: us-east-1  # Replace with your AWS region
 
       - name: push docker image for lambda
-        script:
+        run: |
           - export REPO_NAME="data_pipeline_repo"
           - export DOCKER_REGISTRY="public.ecr.aws/s9c0s7v8"
           - echo "Preparing AWS CLI"
