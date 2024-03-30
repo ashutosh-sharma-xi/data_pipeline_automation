@@ -1,0 +1,15 @@
+{
+    "rules": [
+        {
+            "rulePriority": 1,
+            "description": "Delete untagged images",
+            "selection": {
+                "tagStatus": "untagged",
+                "countType": "sinceImagePushed"
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
