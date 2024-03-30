@@ -38,9 +38,8 @@ class DataPipelineAutomationStack(Stack):
         ecr_repo = ecr.Repository.from_repository_name(self,  "data_pipeline_repo","data_pipeline_repo" )
         
         handler = _lambda.DockerImageFunction(self, "data_transformer_lambda",
-                    runtime=_lambda.Runtime.PYTHON_3_11 ,
                     code= _lambda.DockerImageCode.from_ecr(
-                repository=ecr_repo, tag_or_digest="data_transformer"
+                repository=ecr_repo, tag_or_digest="automated_data_pipeline"
             ),
             memory_size=1024,
             timeout=Duration.minutes(15),
