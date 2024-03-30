@@ -24,7 +24,7 @@ jobs:
           export DOCKER_REGISTRY="public.ecr.aws/s9c0s7v8"
           echo "Preparing AWS CLI"
           aws ecr-public describe-repositories --repository-names $REPO_NAME || aws ecr create-repository --repository-name $REPO_NAME  
-          
+          aws ecr put-lifecycle-policy --repository-name $REPO_NAME --lifecycle-policy-text file://ecr_lifecycle_policy.json
 
           sudo apt-get update
           sudo apt install curl wget unzip -y
@@ -43,12 +43,6 @@ jobs:
           docker build --platform linux/amd64 -t $DATA_PIPELINE_IMAGE_NAME $DATA_PIPELINE_DIR
           docker tag $DATA_PIPELINE_IMAGE_NAME:latest $DOCKER_REGISTRY/$REPO_NAME:$DATA_PIPELINE_IMAGE_NAME
           docker push $DOCKER_REGISTRY/$REPO_NAME:$DATA_PIPELINE_IMAGE_NAME
-
-          echo "deleting unused images..."
-          IMAGES_TO_DELETE=$( aws ecr-public list-images --repository-name $REPO_NAME --filter "tagStatus=UNTAGGED" --query 'imageIds[0:100]' --output json )
-          echo $IMAGES_TO_DELETE | jq length # Gets the number of results
-          aws ecr-public batch-delete-image --repository-name $REPO_NAME --image-ids "$IMAGES_TO_DELETE" || true
-
       
       - name: Install npm
         run: 'sudo apt update -y && sudo apt install nodejs npm -y'
