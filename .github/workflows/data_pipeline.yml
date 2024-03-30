@@ -56,5 +56,8 @@ jobs:
       - name: Synthesize CDK application
         run: cdk synth
 
+      - name: Bootstrap CDK
+        run: cdk bootstrap
+
       - name: Deploy application
         run: cdk deploy  # Adjust deployment options as needed
