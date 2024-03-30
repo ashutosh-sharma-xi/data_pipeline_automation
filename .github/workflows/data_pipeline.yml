@@ -1,0 +1,67 @@
+name: Deploy AWS CDK
+
+on:
+  #push:
+  #branches: [main]
+  #pull_requests:
+  #branches: [main]
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  aws-cdk:
+    runs-on: ubuntu-latest
+    steps:
+      -name: Checkout
+      - uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_DEFAULT_REGION: us-east-1  # Replace with your AWS region
+
+       - name: push docker image for lambda
+        script:
+          - export REPO_NAME="data_pipeline_repo"
+          - export DOCKER_REGISTRY = "public.ecr.aws/s9c0s7v8"
+          - echo "Preparing AWS CLI"
+          - aws ecr describe-repositories --repository-names $REPO_NAME || aws ecr create-repository --repository-name $REPO_NAME  
+          - echo "creating ecr lifecycle policy"
+          - aws ecr put-lifecycle-policy --repository-name ${REPO_NAME} --lifecycle-policy-text file://ecr_lifecycle_policy.json
+          - export TZ=$TZ
+          - echo TZ
+          - ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+          - apt-get update
+          - apt install curl wget unzip -y
+          - aws --version
+          - docker info
+          - docker --version
+          - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          - aws configure set region $AWS_DEFAULT_REGION
+          - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+
+          - export DATA_PIPELINE_DIR="src\lambda"
+          - export DATA_PIPELINE_IMAGE_NAME="automated_data_pipeline"
+          - echo Building_and_pushing_image $DATA_PIPELINE_IMAGE_NAME
+          - docker build --platform linux/amd64 -t $DATA_PIPELINE_IMAGE_NAME $DATA_PIPELINE_DIR
+          - docker tag $DATA_PIPELINE_IMAGE_NAME:latest $DOCKER_REGISTRY/$REPO_NAME:$DATA_PIPELINE_IMAGE_NAME
+          - docker push $DOCKER_REGISTRY/$REPO_NAME:$DATA_PIPELINE_IMAGE_NAME
+      
+      - name: Install npm
+        run: 'sudo apt update -y && sudo apt install nodejs npm -y'
+
+      - name: Install AWS CDK
+        run: 'sudo npm install -g aws-cdk'
+
+      - name: Install requirements
+        run: pip install -r requirements.txt
+        working-directory: /.
+
+      - name: Synthesize CDK application
+        working-directory: /.  # Replace with your CDK project directory
+        run: cdk synth
+
+      - name: Deploy application
+        run: cdk deploy  # Adjust deployment options as needed
