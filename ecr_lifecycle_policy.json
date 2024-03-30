@@ -4,10 +4,10 @@
             "rulePriority": 1,
             "description": "Delete untagged images",
             "selection": {
-                "tagStatus": "any",
-                "countType": "imageCountMoreThan",
+                "tagStatus": "untagged",
+                "countType": "sinceImagePushed",
                 "countUnit": "days",
-                "countNumber": 0
+                "countNumber":1
             },
             "action": {
                 "type": "expire"

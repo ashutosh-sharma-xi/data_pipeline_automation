@@ -24,8 +24,12 @@ jobs:
           export DOCKER_REGISTRY="public.ecr.aws/s9c0s7v8"
           echo "Preparing AWS CLI"
           aws ecr describe-repositories --repository-names $REPO_NAME || aws ecr create-repository --repository-name $REPO_NAME  
-          echo "creating ecr lifecycle policy"
-          aws ecr put-lifecycle-policy --repository-name ${REPO_NAME} --lifecycle-policy-text file://ecr_lifecycle_policy.json
+          echo "deleting unused images..."
+
+          IMAGES_TO_DELETE=$( aws ecr list-images --repository-name $ECR_REPO --filter "tagStatus=UNTAGGED" --query 'imageIds[0:100]' --output json )
+          echo $IMAGES_TO_DELETE | jq length # Gets the number of results
+          aws ecr batch-delete-image --repository-name $ECR_REPO --image-ids "$IMAGES_TO_DELETE" --profile qa || true
+          
           export TZ=$TZ
           echo TZ
           ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
