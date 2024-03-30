@@ -39,7 +39,7 @@ class DataPipelineAutomationStack(Stack):
         
         handler = _lambda.DockerImageFunction(self, "data_transformer_lambda",
                     runtime=_lambda.Runtime.PYTHON_3_11 ,
-                    code=_lambda.Code._lambda.DockerImageCode.from_ecr(
+                    code= _lambda.DockerImageCode.from_ecr(
                 repository=ecr_repo, tag_or_digest="data_transformer"
             ),
             memory_size=1024,
