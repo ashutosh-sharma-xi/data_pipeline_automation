@@ -23,13 +23,8 @@ jobs:
           export REPO_NAME="data_pipeline_repo"
           export DOCKER_REGISTRY="public.ecr.aws/s9c0s7v8"
           echo "Preparing AWS CLI"
-          aws ecr describe-repositories --repository-names $REPO_NAME || aws ecr create-repository --repository-name $REPO_NAME  
+          aws ecr-public describe-repositories --repository-names $REPO_NAME || aws ecr create-repository --repository-name $REPO_NAME  
           echo "deleting unused images..."
-
-          IMAGES_TO_DELETE=$( aws ecr list-images --repository-name $REPO_NAME --filter "tagStatus=UNTAGGED" --query 'imageIds[0:100]' --output json )
-          echo $IMAGES_TO_DELETE | jq length # Gets the number of results
-          aws ecr batch-delete-image --repository-name $REPO_NAME --image-ids "$IMAGES_TO_DELETE" --profile qa || true
-          
 
           sudo apt-get update
           sudo apt install curl wget unzip -y
@@ -39,7 +34,7 @@ jobs:
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set region "us-east-1"
-          aws ecr get-login-password --region "us-east-1" | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+          aws ecr-public get-login-password --region "us-east-1" | docker login --username AWS --password-stdin $DOCKER_REGISTRY
 
           export DATA_PIPELINE_DIR="src\lambda"
           export DATA_PIPELINE_IMAGE_NAME="automated_data_pipeline"
@@ -47,6 +42,10 @@ jobs:
           docker build --platform linux/amd64 -t $DATA_PIPELINE_IMAGE_NAME $DATA_PIPELINE_DIR
           docker tag $DATA_PIPELINE_IMAGE_NAME:latest $DOCKER_REGISTRY/$REPO_NAME:$DATA_PIPELINE_IMAGE_NAME
           docker push $DOCKER_REGISTRY/$REPO_NAME:$DATA_PIPELINE_IMAGE_NAME
+
+          IMAGES_TO_DELETE=$( aws ecr-public list-images --repository-name $REPO_NAME --filter "tagStatus=UNTAGGED" --query 'imageIds[0:100]' --output json )
+          echo $IMAGES_TO_DELETE | jq length # Gets the number of results
+          aws ecr-public batch-delete-image --repository-name $REPO_NAME --image-ids "$IMAGES_TO_DELETE" --profile qa || true
       
       - name: Install npm
         run: 'sudo apt update -y && sudo apt install nodejs npm -y'
