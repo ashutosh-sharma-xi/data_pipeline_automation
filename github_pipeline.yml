@@ -19,7 +19,7 @@ jobs:
             AWS_DEFAULT_REGION: us-east-1  # Replace with your AWS region
 
       - name: push docker image for lambda
-        script:
+        run: |
           - export REPO_NAME="data_pipeline_repo"
           - export DOCKER_REGISTRY="public.ecr.aws/s9c0s7v8"
           - echo "Preparing AWS CLI"
