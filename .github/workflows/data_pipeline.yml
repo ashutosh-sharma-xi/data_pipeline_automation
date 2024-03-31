@@ -20,8 +20,8 @@ jobs:
 
       - name: push docker image for lambda
         run: | 
-          export REPO_NAME= "data_pipeline_repo"
-          export ECR_ACCOUNT_NUMBER = ${{ secrets.AWS_ACCOUNT_NUMBER }}
+          export REPO_NAME="data_pipeline_repo"
+          export ECR_ACCOUNT_NUMBER="${{ secrets.AWS_ACCOUNT_NUMBER }}"
           echo "Using ECR Account: $ECR_ACCOUNT_NUMBER"
           export DOCKER_REGISTRY=${ECR_ACCOUNT_NUMBER}.dkr.ecr.us-east-1.amazonaws.com
           echo "Preparing AWS CLI"
