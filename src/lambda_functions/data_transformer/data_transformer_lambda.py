@@ -24,7 +24,6 @@ def lambda_handler(event):
         # Convert DataFrame to list of tuples
         data.reset_index(inplace=True)
         data_tuple = [tuple(x) for x in data.to_numpy()]
-        print("\n\n\nthis is the data:",data)
 
         print("\n\n\nthis is the tuple:",data_tuple)
 
@@ -125,4 +124,3 @@ def store_in_rds(table_name, data_tuple):
     except Exception as e:
         logger.error(f"Failed to store to db... {e}")
         raise e
-lambda_handler()
