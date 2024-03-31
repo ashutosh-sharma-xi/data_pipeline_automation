@@ -9,8 +9,7 @@ logger = setup_logger()
 
 banks_ticker_dict = {"HDFC":"HDB", "SBI":"SBIN.NS" , "ICICI":"IBN"}
 
-def lambda_handler():
-  event = {"num_days":10}
+def lambda_handler(event):
   days = event.get("num_days")
   for bank , ticker_symbol in banks_ticker_dict.items():
     try:
