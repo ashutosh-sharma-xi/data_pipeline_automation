@@ -62,4 +62,4 @@ jobs:
         run: cdk deploy --require-approval never  # Adjust deployment options as needed
 
       - name: Update lambda Function
-        run: aws lambda update-function-code --function-name DataTransformerLambda --image-uri ${AWS_ACCOUNT_NUMBER}.dkr.ecr.us-east-1.amazonaws.com/data_pipeline_repo:automated_data_pipeline
+        run: aws lambda update-function-code --function-name DataTransformerLambda --image-uri ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/data_pipeline_repo:automated_data_pipeline
