@@ -21,9 +21,9 @@ jobs:
       - name: push docker image for lambda
         run: | 
           export REPO_NAME="data_pipeline_repo"
-          export ECR_ACCOUNT_NUMBER="${{ secrets.AWS_ACCOUNT_NUMBER }}"
-          echo "Using ECR Account: $ECR_ACCOUNT_NUMBER"
-          export DOCKER_REGISTRY=${ECR_ACCOUNT_NUMBER}.dkr.ecr.us-east-1.amazonaws.com
+          export AWS_ACCOUNT_NUMBER="${{ secrets.AWS_ACCOUNT_ID }}"
+          echo "Using ECR Account: $AWS_ACCOUNT_NUMBER"
+          export DOCKER_REGISTRY=${AWS_ACCOUNT_NUMBER}.dkr.ecr.us-east-1.amazonaws.com
           echo "Preparing AWS CLI"
           aws ecr describe-repositories --repository-names $REPO_NAME || aws ecr create-repository --repository-name $REPO_NAME  
           aws ecr put-lifecycle-policy --repository-name $REPO_NAME --lifecycle-policy-text file://ecr_lifecycle_policy.json
