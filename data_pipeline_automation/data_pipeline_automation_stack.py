@@ -20,7 +20,7 @@ class DataPipelineAutomationStack(Stack):
             "AmazonDynamoDBReadOnlyAccess",
             "AmazonSESFullAccess",
             "AmazonS3FullAccess",
-            "AmazonRDSFullAccess "
+            "AmazonRDSFullAccess"
         ]
 
         data_pipeline_automation_role = iam.Role(
