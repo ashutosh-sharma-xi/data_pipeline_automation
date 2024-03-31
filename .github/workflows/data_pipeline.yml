@@ -39,7 +39,7 @@ jobs:
           aws ecr get-login-password --region "us-east-1" | docker login --username AWS --password-stdin $DOCKER_REGISTRY
 
           echo "Current Working Directory: $(pwd) Starting building ecr image..."
-          export DATA_PIPELINE_DIR="src/lambda"
+          export DATA_PIPELINE_DIR="src/lambda_functions/data_transformer"
           export DATA_PIPELINE_IMAGE_NAME="automated_data_pipeline"
           echo Building_and_pushing_image $DATA_PIPELINE_IMAGE_NAME
           docker build --platform linux/amd64 -t $DATA_PIPELINE_IMAGE_NAME $DATA_PIPELINE_DIR

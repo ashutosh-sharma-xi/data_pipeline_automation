@@ -20,13 +20,14 @@ class DataPipelineAutomationStack(Stack):
             "AmazonDynamoDBReadOnlyAccess",
             "AmazonSESFullAccess",
             "AmazonS3FullAccess",
+            "AmazonRDSFullAccess "
         ]
 
         data_pipeline_automation_role = iam.Role(
             self,
             f"DataPipelineAutomationRole",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
-            role_name=f"SparkReportingDashboardRole",
+            role_name=f"AWS_ETL_Role",
         )
 
         for policy_name in policy_names:
@@ -38,6 +39,7 @@ class DataPipelineAutomationStack(Stack):
         ecr_repo = ecr.Repository.from_repository_name(self,  "data_pipeline_repo","data_pipeline_repo" )
         
         handler = _lambda.DockerImageFunction(self, "data_transformer_lambda",
+                                              function_name="DataTransformerLambda"
                     code= _lambda.DockerImageCode.from_ecr(
                 repository=ecr_repo, tag_or_digest="automated_data_pipeline"
             ),
@@ -48,6 +50,5 @@ class DataPipelineAutomationStack(Stack):
                     },
                     retry_attempts=0,
                     )
-
  
         bucket.grant_read_write(handler)
