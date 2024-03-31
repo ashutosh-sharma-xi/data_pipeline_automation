@@ -21,9 +21,10 @@ jobs:
       - name: push docker image for lambda
         run: | 
           export REPO_NAME="data_pipeline_repo"
-          export DOCKER_REGISTRY="public.ecr.aws/s9c0s7v8"
+          export ECR_ACCOUNT_NUMBER="${{ secrets.AWS_ACCOUNT_NUMBER }}"
+          export DOCKER_REGISTRY=${ECR_ACCOUNT_NUMBER}.dkr.ecr.us-east-1.amazonaws.com
           echo "Preparing AWS CLI"
-          aws ecr-public describe-repositories --repository-names $REPO_NAME || aws ecr create-repository --repository-name $REPO_NAME  
+          aws ecr describe-repositories --repository-names $REPO_NAME || aws ecr create-repository --repository-name $REPO_NAME  
           aws ecr put-lifecycle-policy --repository-name $REPO_NAME --lifecycle-policy-text file://ecr_lifecycle_policy.json
 
           sudo apt-get update
@@ -34,7 +35,7 @@ jobs:
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set region "us-east-1"
-          aws ecr-public get-login-password --region "us-east-1" | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+          aws ecr get-login-password --region "us-east-1" | docker login --username AWS --password-stdin $DOCKER_REGISTRY
 
           echo "Current Working Directory: $(pwd) Starting building ecr image..."
           export DATA_PIPELINE_DIR="src/lambda"
