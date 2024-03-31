@@ -9,7 +9,7 @@ logger = setup_logger()
 
 banks_ticker_dict = {"HDFC":"HDB", "SBI":"SBIN.NS" , "ICICI":"IBN"}
 
-def lambda_handler(event):
+def lambda_handler(event , lambda_context):
   days = event.get("num_days")
   for bank , ticker_symbol in banks_ticker_dict.items():
     try:
@@ -124,3 +124,4 @@ def store_in_rds(table_name, data_tuple):
     except Exception as e:
         logger.error(f"Failed to store to db... {e}")
         raise e
+lambda_handler({"num_days":10})
