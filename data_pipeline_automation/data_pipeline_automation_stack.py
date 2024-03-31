@@ -39,7 +39,7 @@ class DataPipelineAutomationStack(Stack):
         ecr_repo = ecr.Repository.from_repository_name(self,  "data_pipeline_repo","data_pipeline_repo" )
         
         handler = _lambda.DockerImageFunction(self, "data_transformer_lambda",
-                                              function_name="DataTransformerLambda"
+                                              function_name="DataTransformerLambda",
                     code= _lambda.DockerImageCode.from_ecr(
                 repository=ecr_repo, tag_or_digest="automated_data_pipeline"
             ),
