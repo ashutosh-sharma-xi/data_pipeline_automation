@@ -32,7 +32,6 @@ def get_db_secret():
     secret = json.loads(get_secret_value_response['SecretString'])
     return secret
 
-
 def db_connection(secrets ):
     hostname = secrets["host"] 
     username = secrets["username"]
