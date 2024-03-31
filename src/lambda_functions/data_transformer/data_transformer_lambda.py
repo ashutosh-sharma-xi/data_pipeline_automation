@@ -31,7 +31,7 @@ def lambda_handler(event):
         # Pass data_tuple to store_in_rds
         store_in_rds(table_name=bank, data_tuple=data_tuple)
     except Exception as e:
-        logger.error("Error occured while fetching data...",e)
+        logger.error(f"Error occured while fetching data...{e}")
 
 def calculate_weighted_average_price(data):
     wap = (data['Open'] + data['High'] + data['Low'] + data['Close']) / 4
@@ -123,6 +123,6 @@ def store_in_rds(table_name, data_tuple):
         conn.close()
 
     except Exception as e:
-        logger.error("Failed to store to db", e)
+        logger.error(f"Failed to store to db... {e}")
         raise e
 lambda_handler()
