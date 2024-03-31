@@ -22,6 +22,7 @@ jobs:
         run: | 
           export REPO_NAME="data_pipeline_repo"
           export ECR_ACCOUNT_NUMBER="${{ secrets.AWS_ACCOUNT_NUMBER }}"
+          echo $(ECR_ACCOUNT_NUMBER)
           export DOCKER_REGISTRY=${ECR_ACCOUNT_NUMBER}.dkr.ecr.us-east-1.amazonaws.com
           echo "Preparing AWS CLI"
           aws ecr describe-repositories --repository-names $REPO_NAME || aws ecr create-repository --repository-name $REPO_NAME  
