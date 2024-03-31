@@ -60,4 +60,4 @@ jobs:
         run: cdk bootstrap
 
       - name: Deploy application
-        run: cdk deploy  # Adjust deployment options as needed
+        run: cdk deploy --require-approval never  # Adjust deployment options as needed
